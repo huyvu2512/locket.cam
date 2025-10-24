@@ -13,6 +13,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-B3TW13S2Y9"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -22,6 +23,7 @@
   </script>
   
   <script id="config">
+    // ... (Toàn bộ phần <script id="config"> giữ nguyên) ...
     let CONFIG = {};
     
     function loadConfigFromURL() {
@@ -52,22 +54,22 @@
   </script>
 
   <style type="text/css">
-    /* THAY ĐỔI 2: XÓA BỎ @font-face BỊ HỎNG */
-    /* @font-face {
-        font-family: 'ProximaSoft';
-        src: url('/fonts/proxima_soft_bold.otf');
-      } 
-    */
+    /* Xóa @font-face bị hỏng */
+    /* @font-face { ... } */
 
     body {
       height: 100vh; margin: 0; 
       
-      /* THAY ĐỔI 3: CẬP NHẬT FONT-FAMILY ƯU TIÊN NUNITO */
-      font-family: "Nunito", ui-rounded, system-ui, "ProximaSoft", sans-serif;
+      /* === THAY ĐỔI CHÍNH Ở ĐÂY === */
+      /* Ưu tiên font hệ thống của Apple, sau đó mới đến Nunito */
+      font-family: ui-rounded, "ProximaSoft", "Nunito", sans-serif;
+      /* === KẾT THÚC THAY ĐỔI === */
       
       background: linear-gradient(black, #2B1F00); 
       -webkit-font-smoothing: antialiased;
     }
+    
+    /* ... (Toàn bộ phần CSS còn lại giữ nguyên không đổi) ... */
     .flex-centered {
       height: 100%; padding: 0; margin: 0; display: flex;
       align-items: center; justify-content: center;
@@ -81,10 +83,6 @@
       background-color: #FFB800; padding: 18px 36px; color: rgba(0, 0, 0, 0.8);
       text-decoration: none; border-radius: 500px; font-weight: 700;
       font-size: 18px; 
-      
-      /* Dùng chung font-family đã khai báo ở body */
-      /* font-family: ui-rounded, "ProximaSoft", sans-serif; */
-      
       cursor: pointer; background-repeat: no-repeat; border: none;
       -webkit-touch-callout: none; -webkit-user-select: none; -khtml-user-select: none;
       -moz-user-select: none; -ms-user-select: none; user-select: none;
@@ -132,23 +130,21 @@
 <body>
 <div class="flex-centered gold-shadow">
   <div class="flex-vertical">
-    
     <h2 class="title">Thêm tôi trên Locket</h2>
     <h3 class="username-subtitle-celebrity" id="username-subtitle"></h3>
     <h3 class="subtitle-celebrity" id="friend-count-subtitle"></h3>
-
     <div class="celebrity-container">
       <img class="celebrity-background" src="https://locket.cam/images/phone_background.svg" />
       <h3 class="celebrity-second-subtitle" id="image-subtitle"></h3>
       <div id="celebrity-image-container">
       </div>
     </div>
-    
     <button class="button" id="open-locket-button" onclick="openDynamicLink()">Mở Locket <img class="button-icon" src="https://locket.cam/images/right_arrow.svg" /></button>
   </div>
 </div>
 
 <script>
+  // ... (Toàn bộ phần <script> giữ nguyên) ...
   document.addEventListener('DOMContentLoaded', function() {
     
     if (loadConfigFromURL()) {
