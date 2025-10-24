@@ -20,12 +20,13 @@
             display: block; margin-bottom: 8px;
             font-weight: 600; color: #555;
         }
-        .form-group input, .form-group textarea {
+        .form-group input {
             width: 100%; padding: 12px; border: 1px solid #ddd;
             border-radius: 6px; box-sizing: border-box; font-size: 14px;
         }
-        .form-group textarea { min-height: 120px; resize: vertical; }
         .form-group small { display: block; margin-top: 5px; color: #888; }
+        .image-inputs { border: 1px solid #eee; padding: 15px; border-radius: 6px; }
+        .image-inputs .form-group { margin-bottom: 10px; }
         .btn {
             display: block; width: 100%; padding: 15px; background-color: #007bff;
             color: white; border: none; border-radius: 6px; font-size: 16px;
@@ -46,32 +47,44 @@
         <h1>Trang Tùy Chỉnh Locket</h1>
 
         <div class="form-group">
-            <label for="user-id">User ID (VD: J97)</label>
-            <input type="text" id="user-id" placeholder="J97">
+            <label for="user-id">User ID</label>
+            <input type="text" id="user-id" placeholder="Nhập User ID (VD: J97)">
         </div>
 
         <div class="form-group">
-            <label for="dynamic-link">Link chuyển đổi (Mở Locket)</label>
-            <input type="url" id="dynamic-link" placeholder="https://locket.page.link/...">
+            <label for="link-id">ID Link Chuyển Đổi</label>
+            <input type="text" id="link-id" placeholder="huyvu2512">
+            <small>ID này sẽ được dùng để tạo link (VD: locket.cam/huyvu2512)</small>
         </div>
-
+        
         <div class="form-group">
-            <label for="image-list">Danh sách Link ảnh (Đã tải lên)</label>
-            <textarea id="image-list" placeholder="https://link.com/anh1.jpg\nhttps://link.com/anh2.jpg\nhttps://link.com/anh3.jpg"></textarea>
-            <small>Tải ảnh lên (ví dụ: Postimages.org) rồi dán link vào đây, mỗi link một dòng.</small>
+            <label for="friend-slots">Slot kết bạn</label>
+            <input type="text" id="friend-slots" placeholder="∞">
+            <small>Nhập số lượng hoặc để trống (mặc định là ∞).</small>
         </div>
 
-        <div class="form-group">
-            <label for="slideshow-speed">Tốc độ chuyển ảnh (mili-giây)</label>
-            <input type="number" id="slideshow-speed" value="2000">
+        <div class="image-inputs">
+            <label>Link ảnh (Tối đa 5 ảnh)</label>
+            <small>Tải ảnh lên <a href="https://postimages.org/" target="_blank">Postimages.org</a> và dán "Link trực tiếp" vào đây.</small>
+            
+            <div class="form-group">
+                <input type="url" id="image-1" placeholder="Link ảnh 1 (Bắt buộc)">
+            </div>
+            <div class="form-group">
+                <input type="url" id="image-2" placeholder="Link ảnh 2">
+            </div>
+            <div class="form-group">
+                <input type="url" id="image-3" placeholder="Link ảnh 3">
+            </div>
+            <div class="form-group">
+                <input type="url" id="image-4" placeholder="Link ảnh 4">
+            </div>
+            <div class="form-group">
+                <input type="url" id="image-5" placeholder="Link ảnh 5">
+            </div>
         </div>
 
-        <div class="form-group">
-            <label for="og-image">Link ảnh đại diện (khi chia sẻ)</label>
-            <input type="url" id="og-image" placeholder="https://link.com/anh_dai_dien.jpg">
-            <small>Nếu bỏ trống, sẽ tự động lấy ảnh đầu tiên.</small>
-        </div>
-
+        <br>
         <button class="btn btn-redirect" onclick="generateAndRedirect()">HOÀN THÀNH (Tạo và đi tới link)</button>
 
         <div id="output-area">
@@ -82,61 +95,64 @@
     </div>
 
     <script>
-        // Hàm này xác định đường dẫn đến trang kết thúc (trong thư mục /id/)
         function getBaseUrl() {
-            let path = window.location.pathname; // Lấy /locket.cam/ hoặc /locket.cam/index.html
-            // Đảm bảo đường dẫn luôn kết thúc bằng dấu /
+            let path = window.location.pathname; 
             if (!path.endsWith('/')) {
                 path = path.substring(0, path.lastIndexOf('/') + 1);
             }
-            // Trả về đường dẫn đầy đủ đến thư mục /id/
             return window.location.origin + path + 'id/';
         }
 
         function generateUrl() {
-            const baseUrl = getBaseUrl(); // Tự động lấy link: .../locket.cam/id/
+            const baseUrl = getBaseUrl(); 
             const userId = document.getElementById('user-id').value.trim();
-            const dynamicLink = document.getElementById('dynamic-link').value.trim();
-            const imageListText = document.getElementById('image-list').value.trim();
-            const slideshowSpeed = document.getElementById('slideshow-speed').value;
-            let ogImage = document.getElementById('og-image').value.trim();
+            const linkId = document.getElementById('link-id').value.trim();
+            const friendSlots = document.getElementById('friend-slots').value.trim() || '∞'; // Mặc định là ∞
 
-            const images = imageListText.split('\n')
-                                        .filter(link => link.trim() !== '')
-                                        .map(link => link.trim());
+            // Xây dựng link chuyển đổi
+            if (!linkId) {
+                alert("Vui lòng nhập ID Link Chuyển Đổi.");
+                return null;
+            }
+            const dynamicLink = `https://locket.cam/${linkId}`;
+
+            // Thu thập các link ảnh
+            const images = [];
+            for (let i = 1; i <= 5; i++) {
+                const imgLink = document.getElementById(`image-${i}`).value.trim();
+                if (imgLink) {
+                    images.push(imgLink);
+                }
+            }
             
             if (images.length === 0) {
-                alert("Bạn phải nhập ít nhất một link ảnh.");
+                alert("Bạn phải nhập ít nhất một link ảnh (Link ảnh 1).");
                 return null;
             }
 
-            if (ogImage === '') {
-                ogImage = images[0];
-            }
-            
-            if (!userId || !dynamicLink) {
-                alert("Vui lòng điền User ID và Link chuyển đổi.");
+            if (!userId) {
+                alert("Vui lòng điền User ID.");
                 return null;
             }
             
+            // Mã hóa các tham số
             const encodedId = encodeURIComponent(userId);
             const encodedDynamicLink = encodeURIComponent(dynamicLink);
-            const encodedImages = encodeURIComponent(images.join(','));
-            const encodedOgImage = encodeURIComponent(ogImage);
+            const encodedImages = encodeURIComponent(images.join(',')); // Nối các link ảnh bằng dấu phẩy
+            const encodedSlots = encodeURIComponent(friendSlots);
 
-            // Trả về URL cuối cùng
-            return `${baseUrl}?id=${encodedId}&link=${encodedDynamicLink}&images=${encodedImages}&speed=${slideshowSpeed}&ogImage=${encodedOgImage}`;
+            // Trả về URL cuối cùng (đã bỏ speed và ogImage)
+            return `${baseUrl}?id=${encodedId}&link=${encodedDynamicLink}&images=${encodedImages}&slots=${encodedSlots}`;
         }
 
         function generateAndRedirect() {
             const finalUrl = generateUrl();
             if (finalUrl) {
-                // Chuyển hướng người dùng đến trang kết thúc
                 window.location.href = finalUrl;
             }
         }
         
-        // Hiển thị link để sao chép (nếu muốn)
+        // Tự động cập nhật ô link sao chép khi người dùng gõ
         document.querySelector('.container').addEventListener('input', function() {
             const finalUrl = generateUrl();
             if (finalUrl) {
@@ -148,16 +164,11 @@
             }
         });
 
-
         function copyLink() {
             const outputLink = document.getElementById('output-link');
-            if (!outputLink.value) {
-                alert("Chưa có link để sao chép. Vui lòng điền đầy đủ thông tin.");
-                return;
-            }
+            if (!outputLink.value) return;
             outputLink.select();
             outputLink.setSelectionRange(0, 99999);
-            
             try {
                 navigator.clipboard.writeText(outputLink.value);
                 document.getElementById('copy-button').innerText = 'Đã sao chép!';

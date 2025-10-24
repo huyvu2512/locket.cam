@@ -27,25 +27,29 @@
       const userId = params.get('id');
       const dynamicLink = params.get('link') ? decodeURIComponent(params.get('link')) : null;
       const imagesParam = params.get('images') ? decodeURIComponent(params.get('images')) : null;
-      const ogImage = params.get('ogImage') ? decodeURIComponent(params.get('ogImage')) : null;
-      
+      const friendSlots = params.get('slots') ? decodeURIComponent(params.get('slots')) : '∞'; // Đọc slots, mặc định là ∞
+
       if (!userId || !dynamicLink || !imagesParam) {
         document.getElementById('page-title').innerText = "Lỗi: Không tìm thấy thông tin";
         return false;
       }
       
+      const imageList = imagesParam.split(',');
+      
       CONFIG = {
         USER_ID: userId,
         DYNAMIC_LINK: dynamicLink,
-        IMAGE_LIST: imagesParam.split(','),
-        SLIDESHOW_SPEED: parseInt(params.get('speed') || 2000, 10),
-        OG_IMAGE: ogImage || imagesParam.split(',')[0]
+        IMAGE_LIST: imageList,
+        SLIDESHOW_SPEED: 2000, // Mặc định 2 giây (2000ms)
+        OG_IMAGE: imageList[0], // Luôn lấy ảnh đầu tiên làm ảnh đại diện
+        FRIEND_SLOTS: friendSlots // Thêm slot kết bạn vào config
       };
       return true;
     }
   </script>
 
   <style type="text/css">
+    /* ... (Toàn bộ CSS của bạn, giữ nguyên không đổi) ... */
     @font-face {
       font-family: 'ProximaSoft';
       src: url('/fonts/proxima_soft_bold.otf');
@@ -144,7 +148,11 @@
       document.getElementById('og-description').setAttribute('content', descriptionText);
 
       document.getElementById('username-subtitle').innerText = `@${userID}`;
-      document.getElementById('friend-count-subtitle').innerHTML = `${userID} có thể thêm <span class="subtitle-celebrity-highlight">∞</span> người bạn!`;
+      
+      // Cập nhật slot kết bạn từ CONFIG
+      document.getElementById('friend-count-subtitle').innerHTML = 
+        `${userID} có thể thêm <span class="subtitle-celebrity-highlight">${CONFIG.FRIEND_SLOTS}</span> người bạn!`;
+        
       document.getElementById('image-subtitle').innerText = descriptionText;
 
       
@@ -160,7 +168,7 @@
         container.appendChild(initialImage);
 
         if (celebrityImages.length > 1) {
-          setInterval(changeImage, CONFIG.SLIDESHOW_SPEED);
+          setInterval(changeImage, CONFIG.SLIDESHOW_SPEED); // Dùng tốc độ mặc định
         }
 
         function changeImage() {
