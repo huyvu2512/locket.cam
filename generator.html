@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trình tạo Link Locket</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f4f4; margin: 0; padding: 20px;
+            display: flex; justify-content: center;
+        }
+        .container {
+            max-width: 600px; width: 100%; background-color: #fff;
+            padding: 30px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        h1 { text-align: center; color: #333; margin-top: 0; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label {
+            display: block; margin-bottom: 8px;
+            font-weight: 600; color: #555;
+        }
+        .form-group input, .form-group textarea {
+            width: 100%; padding: 12px; border: 1px solid #ddd;
+            border-radius: 6px; box-sizing: border-box; font-size: 14px;
+        }
+        .form-group textarea { min-height: 120px; resize: vertical; }
+        .form-group small { display: block; margin-top: 5px; color: #888; }
+        .btn {
+            display: block; width: 100%; padding: 15px; background-color: #007bff;
+            color: white; border: none; border-radius: 6px; font-size: 16px;
+            font-weight: 700; cursor: pointer; transition: background-color 0.2s;
+        }
+        .btn:hover { background-color: #0056b3; }
+        #output-area { margin-top: 25px; display: none; }
+        #output-area input { font-size: 16px; background-color: #f0f0f0; }
+        #output-area button { background-color: #28a745; margin-top: 10px; }
+        #output-area button:hover { background-color: #218838; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Trình tạo Link Locket (cho GitHub)</h1>
+
+        <div class="form-group">
+            <label for="base-url">URL Trang index.html của bạn</label>
+            <input type="url" id="base-url" placeholder="https://TEN-CUA-BAN.github.io/TEN-KHO-CHUA/index.html">
+            <small>Đây là link GitHub Pages của bạn (trỏ đến tệp index.html).</small>
+        </div>
+
+        <div class="form-group">
+            <label for="user-id">User ID (VD: J97)</label>
+            <input type="text" id="user-id" placeholder="J97">
+        </div>
+
+        <div class="form-group">
+            <label for="dynamic-link">Link chuyển đổi (Mở Locket)</label>
+            <input type="url" id="dynamic-link" placeholder="https://locket.page.link/...">
+        </div>
+
+        <div class="form-group">
+            <label for="image-list">Danh sách Link ảnh (Đã tải lên)</label>
+            <textarea id="image-list" placeholder="https." "link.com/anh1.jpg\nhttps://link.com/anh2.jpg\nhttps://link.com/anh3.jpg"></textarea>
+            <small>Tải ảnh lên (ví dụ: Postimages.org) rồi dán link vào đây, mỗi link một dòng.</small>
+        </div>
+
+        <div class="form-group">
+            <label for="slideshow-speed">Tốc độ chuyển ảnh (mili-giây)</label>
+            <input type="number" id="slideshow-speed" value="2000">
+        </div>
+
+        <div class="form-group">
+            <label for="og-image">Link ảnh đại diện (khi chia sẻ)</label>
+            <input type="url" id="og-image" placeholder="https://link.com/anh_dai_dien.jpg">
+            <small>Nếu bỏ trống, sẽ tự động lấy ảnh đầu tiên.</small>
+        </div>
+
+        <button class="btn" onclick="generateLink()">1. Tạo Link chia sẻ</button>
+
+        <div id="output-area">
+            <label for="output-link">Link của bạn (để chia sẻ):</label>
+            <input type="text" id="output-link" readonly>
+            <button class="btn" id="copy-button" onclick="copyLink()">2. Sao chép Link</button>
+        </div>
+    </div>
+
+    <script>
+        function generateLink() {
+            // 1. Lấy tất cả giá trị
+            const baseUrl = document.getElementById('base-url').value.trim();
+            const userId = document.getElementById('user-id').value.trim();
+            const dynamicLink = document.getElementById('dynamic-link').value.trim();
+            const imageListText = document.getElementById('image-list').value.trim();
+            const slideshowSpeed = document.getElementById('slideshow-speed').value;
+            let ogImage = document.getElementById('og-image').value.trim();
+
+            // 2. Xử lý danh sách ảnh
+            const images = imageListText.split('\n')
+                                        .filter(link => link.trim() !== '')
+                                        .map(link => link.trim());
+            
+            if (images.length === 0) {
+                alert("Bạn phải nhập ít nhất một link ảnh.");
+                return;
+            }
+
+            // 3. Xử lý ảnh OG
+            if (ogImage === '') {
+                ogImage = images[0]; // Lấy ảnh đầu tiên nếu OG bị bỏ trống
+            }
+            
+            // 4. Kiểm tra các trường bắt buộc
+            if (!baseUrl || !userId || !dynamicLink) {
+                alert("Vui lòng điền URL cơ sở, User ID, và Link chuyển đổi.");
+                return;
+            }
+            
+            // 5. Mã hóa các thành phần để đưa vào URL
+            const encodedId = encodeURIComponent(userId);
+            const encodedDynamicLink = encodeURIComponent(dynamicLink);
+            const encodedImages = encodeURIComponent(images.join(',')); // Nối mảng ảnh bằng dấu phẩy
+            const encodedOgImage = encodeURIComponent(ogImage);
+
+            // 6. Xây dựng URL cuối cùng
+            const finalUrl = `${baseUrl}?id=${encodedId}&link=${encodedDynamicLink}&images=${encodedImages}&speed=${slideshowSpeed}&ogImage=${encodedOgImage}`;
+
+            // 7. Hiển thị cho người dùng
+            document.getElementById('output-area').style.display = 'block';
+            document.getElementById('output-link').value = finalUrl;
+            document.getElementById('copy-button').innerText = '2. Sao chép Link';
+        }
+
+        function copyLink() {
+            const outputLink = document.getElementById('output-link');
+            outputLink.select();
+            outputLink.setSelectionRange(0, 99999); // Dành cho di động
+            
+            try {
+                navigator.clipboard.writeText(outputLink.value);
+                document.getElementById('copy-button').innerText = 'Đã sao chép!';
+            } catch (err) {
+                alert('Không thể sao chép tự động, vui lòng sao chép thủ công.');
+            }
+        }
+    </script>
+
+</body>
+</html>
