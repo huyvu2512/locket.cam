@@ -9,7 +9,10 @@
   <meta property="og:title" id="og-title" content="Locket" />
   <meta property="og:image" id="og-image" content="" />
   <meta property="og:description" id="og-description" content="" />
-  
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-B3TW13S2Y9"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -40,23 +43,30 @@
         USER_ID: userId,
         DYNAMIC_LINK: dynamicLink,
         IMAGE_LIST: imageList,
-        SLIDESHOW_SPEED: 2000, // Mặc định 2 giây (2000ms)
-        OG_IMAGE: imageList[0], // Luôn lấy ảnh đầu tiên làm ảnh đại diện
-        FRIEND_SLOTS: friendSlots // Thêm slot kết bạn vào config
+        SLIDESHOW_SPEED: 2000, 
+        OG_IMAGE: imageList[0],
+        FRIEND_SLOTS: friendSlots
       };
       return true;
     }
   </script>
 
   <style type="text/css">
-    /* ... (Toàn bộ CSS của bạn, giữ nguyên không đổi) ... */
-    @font-face {
-      font-family: 'ProximaSoft';
-      src: url('/fonts/proxima_soft_bold.otf');
-    }
+    /* THAY ĐỔI 2: XÓA BỎ @font-face BỊ HỎNG */
+    /* @font-face {
+        font-family: 'ProximaSoft';
+        src: url('/fonts/proxima_soft_bold.otf');
+      } 
+    */
+
     body {
-      height: 100vh; margin: 0; font-family: ui-rounded, "ProximaSoft", sans-serif;
-      background: linear-gradient(black, #2B1F00); -webkit-font-smoothing: antialiased;
+      height: 100vh; margin: 0; 
+      
+      /* THAY ĐỔI 3: CẬP NHẬT FONT-FAMILY ƯU TIÊN NUNITO */
+      font-family: "Nunito", ui-rounded, system-ui, "ProximaSoft", sans-serif;
+      
+      background: linear-gradient(black, #2B1F00); 
+      -webkit-font-smoothing: antialiased;
     }
     .flex-centered {
       height: 100%; padding: 0; margin: 0; display: flex;
@@ -70,7 +80,11 @@
     .button {
       background-color: #FFB800; padding: 18px 36px; color: rgba(0, 0, 0, 0.8);
       text-decoration: none; border-radius: 500px; font-weight: 700;
-      font-size: 18px; font-family: ui-rounded, "ProximaSoft", sans-serif;
+      font-size: 18px; 
+      
+      /* Dùng chung font-family đã khai báo ở body */
+      /* font-family: ui-rounded, "ProximaSoft", sans-serif; */
+      
       cursor: pointer; background-repeat: no-repeat; border: none;
       -webkit-touch-callout: none; -webkit-user-select: none; -khtml-user-select: none;
       -moz-user-select: none; -ms-user-select: none; user-select: none;
@@ -149,7 +163,6 @@
 
       document.getElementById('username-subtitle').innerText = `@${userID}`;
       
-      // Cập nhật slot kết bạn từ CONFIG
       document.getElementById('friend-count-subtitle').innerHTML = 
         `${userID} có thể thêm <span class="subtitle-celebrity-highlight">${CONFIG.FRIEND_SLOTS}</span> người bạn!`;
         
@@ -168,7 +181,7 @@
         container.appendChild(initialImage);
 
         if (celebrityImages.length > 1) {
-          setInterval(changeImage, CONFIG.SLIDESHOW_SPEED); // Dùng tốc độ mặc định
+          setInterval(changeImage, CONFIG.SLIDESHOW_SPEED); 
         }
 
         function changeImage() {
