@@ -65,10 +65,9 @@
 
         <div class="image-inputs">
             <label>Link ảnh (Tối đa 5 ảnh)</label>
-            <small>Tải ảnh lên <a href="https://postimages.org/" target="_blank">Postimages.org</a> và dán "Link trực tiếp" vào đây.</small>
             
             <div class="form-group">
-                <input type="url" id="image-1" placeholder="Link ảnh 1 (Bắt buộc)">
+                <input type="url" id="image-1" placeholder="Link ảnh 1">
             </div>
             <div class="form-group">
                 <input type="url" id="image-2" placeholder="Link ảnh 2">
@@ -109,9 +108,8 @@
             const linkId = document.getElementById('link-id').value.trim();
             const friendSlots = document.getElementById('friend-slots').value.trim() || '∞'; // Mặc định là ∞
 
-            // Xây dựng link chuyển đổi
+            // Kiểm tra linkId, nếu không có thì không tạo link
             if (!linkId) {
-                alert("Vui lòng nhập ID Link Chuyển Đổi.");
                 return null;
             }
             const dynamicLink = `https://locket.cam/${linkId}`;
@@ -125,13 +123,13 @@
                 }
             }
             
+            // Kiểm tra ảnh, nếu không có ảnh 1 thì không tạo link
             if (images.length === 0) {
-                alert("Bạn phải nhập ít nhất một link ảnh (Link ảnh 1).");
                 return null;
             }
 
+            // Kiểm tra User ID, nếu không có thì không tạo link
             if (!userId) {
-                alert("Vui lòng điền User ID.");
                 return null;
             }
             
@@ -141,7 +139,7 @@
             const encodedImages = encodeURIComponent(images.join(',')); // Nối các link ảnh bằng dấu phẩy
             const encodedSlots = encodeURIComponent(friendSlots);
 
-            // Trả về URL cuối cùng (đã bỏ speed và ogImage)
+            // Trả về URL cuối cùng
             return `${baseUrl}?id=${encodedId}&link=${encodedDynamicLink}&images=${encodedImages}&slots=${encodedSlots}`;
         }
 
@@ -149,6 +147,10 @@
             const finalUrl = generateUrl();
             if (finalUrl) {
                 window.location.href = finalUrl;
+            } else {
+                // Nếu người dùng bấm "Hoàn thành" mà chưa điền đủ,
+                // chúng ta có thể chọn báo lỗi hoặc không làm gì cả.
+                // Ở đây chọn không làm gì cả.
             }
         }
         
@@ -173,7 +175,7 @@
                 navigator.clipboard.writeText(outputLink.value);
                 document.getElementById('copy-button').innerText = 'Đã sao chép!';
             } catch (err) {
-                alert('Không thể sao chép tự động.');
+                // Không báo lỗi nếu sao chép thất bại
             }
         }
     </script>
