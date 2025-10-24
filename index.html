@@ -1,226 +1,171 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="vi">
 <head>
-  <meta charset="utf-8">
-  <link href="/favicon.ico" rel="icon" />
-  <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  
-  <title id="page-title">Đang tải...</title>
-  <meta property="og:title" id="og-title" content="Locket" />
-  <meta property="og:image" id="og-image" content="" />
-  <meta property="og:description" id="og-description" content="" />
-  
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-B3TW13S2Y9"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-B3TW13S2Y9');
-  </script>
-  
-  <script id="config">
-    // Biến CONFIG toàn cục
-    let CONFIG = {};
-    
-    // Hàm này sẽ trích xuất dữ liệu từ URL
-    function loadConfigFromURL() {
-      const params = new URLSearchParams(window.location.search);
-      
-      const userId = params.get('id');
-      const dynamicLink = params.get('link') ? decodeURIComponent(params.get('link')) : null;
-      const imagesParam = params.get('images') ? decodeURIComponent(params.get('images')) : null;
-      const ogImage = params.get('ogImage') ? decodeURIComponent(params.get('ogImage')) : null;
-      
-      // Kiểm tra nếu không có ID, dừng thực thi
-      if (!userId || !dynamicLink || !imagesParam) {
-        document.getElementById('page-title').innerText = "Lỗi: Không tìm thấy thông tin";
-        return false;
-      }
-      
-      CONFIG = {
-        USER_ID: userId,
-        DYNAMIC_LINK: dynamicLink,
-        IMAGE_LIST: imagesParam.split(','), // Tách chuỗi ảnh thành mảng
-        SLIDESHOW_SPEED: parseInt(params.get('speed') || 2000, 10),
-        OG_IMAGE: ogImage || imagesParam.split(',')[0] // Dùng ảnh OG, nếu không có thì lấy ảnh đầu tiên
-      };
-      return true;
-    }
-  </script>
-
-  <style type="text/css">
-    /* ... (Toàn bộ CSS từ tệp trước của bạn)... */
-    /* Sao chép toàn bộ nội dung thẻ <style> từ tệp gốc của bạn và dán vào đây */
-    @font-face {
-      font-family: 'ProximaSoft';
-      src: url('/fonts/proxima_soft_bold.otf');
-    }
-    body {
-      height: 100vh; margin: 0; font-family: ui-rounded, "ProximaSoft", sans-serif;
-      background: linear-gradient(black, #2B1F00); -webkit-font-smoothing: antialiased;
-    }
-    .flex-centered {
-      height: 100%; padding: 0; margin: 0; display: flex;
-      align-items: center; justify-content: center;
-    }
-    .flex-vertical {
-      display: flex; align-items: center;
-      justify-content: center; flex-direction: column;
-    }
-    .gold-shadow { box-shadow: 0 0 60px rgba(255, 199, 0, 0.5); }
-    .button {
-      background-color: #FFB800; padding: 18px 36px; color: rgba(0, 0, 0, 0.8);
-      text-decoration: none; border-radius: 500px; font-weight: 700;
-      font-size: 18px; font-family: ui-rounded, "ProximaSoft", sans-serif;
-      cursor: pointer; background-repeat: no-repeat; border: none;
-      -webkit-touch-callout: none; -webkit-user-select: none; -khtml-user-select: none;
-      -moz-user-select: none; -ms-user-select: none; user-select: none;
-    }
-    .button-icon { margin-left: 6px; }
-    #celebrity-image-container {
-      position: absolute; top: 20px; left: -20px;
-      width: 148px; height: 148px; transform: rotate(-10deg);
-      border-radius: 28px; border: 6px solid #FFB900;
-      overflow: hidden; z-index: 2;
-    }
-    .celebrity-image {
-      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-      background-size: cover; background-position: center;
-      transition: opacity 1s ease-in-out;
-    }
-    .celebrity-container { position: relative; width: 265px; height: 336px; }
-    .celebrity-background {
-      position: absolute; top: 0; left: 0;
-      z-index: 1; width: 265px; height: 336px;
-    }
-    .username-subtitle-celebrity {
-      color: rgba(255, 255, 255, 0.40); text-align: center; font-size: 18px;
-      font-weight: 600; line-height: 24px; margin: 0;
-      margin-top: -2px; margin-bottom: 40px;
-    }
-    .subtitle-celebrity {
-      color: rgba(255, 255, 255, 0.64); font-weight: 600; font-size: 18px;
-      padding: 0; margin: 0; text-align: center;
-      margin-bottom: 48px; line-height: normal;
-    }
-    .subtitle-celebrity-highlight { color: rgba(255, 255, 255, 1.0); }
-    .celebrity-second-subtitle {
-      position: absolute; top: 242px; left: 0; width: 235px; height: 52px;
-      padding: 0 15px; margin: 0; text-align: center;
-      color: rgba(255, 255, 255, 0.60); font-size: 18px; font-weight: 600;
-      line-height: 26px; word-wrap: break-word; z-index: 3;
-    }
-    .title {
-      color: rgba(255, 255, 255, 0.9); font-weight: 700; font-size: 30px;
-      padding: 0; margin: 0; margin-bottom: 6px; text-align: center;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trình tạo Link Locket</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f4f4; margin: 0; padding: 20px;
+            display: flex; justify-content: center;
+        }
+        .container {
+            max-width: 600px; width: 100%; background-color: #fff;
+            padding: 30px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        h1 { text-align: center; color: #333; margin-top: 0; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label {
+            display: block; margin-bottom: 8px;
+            font-weight: 600; color: #555;
+        }
+        .form-group input, .form-group textarea {
+            width: 100%; padding: 12px; border: 1px solid #ddd;
+            border-radius: 6px; box-sizing: border-box; font-size: 14px;
+        }
+        .form-group textarea { min-height: 120px; resize: vertical; }
+        .form-group small { display: block; margin-top: 5px; color: #888; }
+        .btn {
+            display: block; width: 100%; padding: 15px; background-color: #007bff;
+            color: white; border: none; border-radius: 6px; font-size: 16px;
+            font-weight: 700; cursor: pointer; transition: background-color 0.2s;
+        }
+        .btn:hover { background-color: #0056b3; }
+        #output-area { margin-top: 25px; display: none; }
+        #output-area input { font-size: 16px; background-color: #f0f0f0; }
+        #output-area button { background-color: #28a745; margin-top: 10px; }
+        #output-area button:hover { background-color: #218838; }
+        .btn-redirect { background-color: #ffb800; color: #333; }
+        .btn-redirect:hover { background-color: #e6a600; }
+    </style>
 </head>
 <body>
-<div class="flex-centered gold-shadow">
-  <div class="flex-vertical">
-    
-    <h2 class="title">Thêm tôi trên Locket</h2>
-    <h3 class="username-subtitle-celebrity" id="username-subtitle"></h3>
-    <h3 class="subtitle-celebrity" id="friend-count-subtitle"></h3>
 
-    <div class="celebrity-container">
-      <img class="celebrity-background" src="https://locket.cam/images/phone_background.svg" />
-      <h3 class="celebrity-second-subtitle" id="image-subtitle"></h3>
-      <div id="celebrity-image-container">
-      </div>
+    <div class="container">
+        <h1>Trang Tùy Chỉnh Locket</h1>
+
+        <div class="form-group">
+            <label for="user-id">User ID (VD: J97)</label>
+            <input type="text" id="user-id" placeholder="J97">
+        </div>
+
+        <div class="form-group">
+            <label for="dynamic-link">Link chuyển đổi (Mở Locket)</label>
+            <input type="url" id="dynamic-link" placeholder="https://locket.page.link/...">
+        </div>
+
+        <div class="form-group">
+            <label for="image-list">Danh sách Link ảnh (Đã tải lên)</label>
+            <textarea id="image-list" placeholder="https://link.com/anh1.jpg\nhttps://link.com/anh2.jpg\nhttps://link.com/anh3.jpg"></textarea>
+            <small>Tải ảnh lên (ví dụ: Postimages.org) rồi dán link vào đây, mỗi link một dòng.</small>
+        </div>
+
+        <div class="form-group">
+            <label for="slideshow-speed">Tốc độ chuyển ảnh (mili-giây)</label>
+            <input type="number" id="slideshow-speed" value="2000">
+        </div>
+
+        <div class="form-group">
+            <label for="og-image">Link ảnh đại diện (khi chia sẻ)</label>
+            <input type="url" id="og-image" placeholder="https://link.com/anh_dai_dien.jpg">
+            <small>Nếu bỏ trống, sẽ tự động lấy ảnh đầu tiên.</small>
+        </div>
+
+        <button class="btn btn-redirect" onclick="generateAndRedirect()">HOÀN THÀNH (Tạo và đi tới link)</button>
+
+        <div id="output-area">
+            <label for="output-link">Hoặc sao chép Link (để chia sẻ):</label>
+            <input type="text" id="output-link" readonly>
+            <button class="btn" id="copy-button" onclick="copyLink()">Sao chép Link</button>
+        </div>
     </div>
-    
-    <button class="button" id="open-locket-button" onclick="openDynamicLink()">Mở Locket <img class="button-icon" src="https://locket.cam/images/right_arrow.svg" /></button>
-  </div>
-</div>
 
-<script>
-  // Chờ cho tất cả nội dung HTML được tải xong
-  document.addEventListener('DOMContentLoaded', function() {
-    
-    // Thử tải cấu hình từ URL
-    if (loadConfigFromURL()) {
-      // --- 1. ÁP DỤNG CÁC BIẾN VÀO TRANG ---
-      const userID = CONFIG.USER_ID;
-      const titleText = `Thêm ${userID} trên Locket 💛`;
-      const descriptionText = `Các ảnh từ ${userID} và BFF trên Màn hình chính của bạn`;
-
-      // Cập nhật tiêu đề trang và các thẻ Meta
-      document.getElementById('page-title').innerText = titleText;
-      document.getElementById('og-title').setAttribute('content', titleText);
-      document.getElementById('og-image').setAttribute('content', CONFIG.OG_IMAGE);
-      document.getElementById('og-description').setAttribute('content', descriptionText);
-
-      // Cập nhật nội dung hiển thị trên trang
-      document.getElementById('username-subtitle').innerText = `@${userID}`;
-      document.getElementById('friend-count-subtitle').innerHTML = `${userID} có thể thêm <span class="subtitle-celebrity-highlight">∞</span> người bạn!`;
-      document.getElementById('image-subtitle').innerText = descriptionText;
-
-      
-      // --- 2. XỬ LÝ SLIDESHOW ẢNH ---
-      const celebrityImages = CONFIG.IMAGE_LIST;
-      const container = document.getElementById('celebrity-image-container');
-      
-      if (celebrityImages && celebrityImages.length > 0) {
-        let currentImageIndex = 0;
-
-        const initialImage = document.createElement('div');
-        initialImage.className = 'celebrity-image';
-        initialImage.style.backgroundImage = `url(${celebrityImages[0]})`;
-        container.appendChild(initialImage);
-
-        if (celebrityImages.length > 1) {
-          setInterval(changeImage, CONFIG.SLIDESHOW_SPEED);
+    <script>
+        // Hàm này xác định đường dẫn đến trang kết thúc (trong thư mục /id/)
+        function getBaseUrl() {
+            let path = window.location.pathname; // Lấy /locket.cam/ hoặc /locket.cam/index.html
+            // Đảm bảo đường dẫn luôn kết thúc bằng dấu /
+            if (!path.endsWith('/')) {
+                path = path.substring(0, path.lastIndexOf('/') + 1);
+            }
+            // Trả về đường dẫn đầy đủ đến thư mục /id/
+            return window.location.origin + path + 'id/';
         }
 
-        function changeImage() {
-          const oldImage = container.querySelector('.celebrity-image');
-          currentImageIndex = (currentImageIndex + 1) % celebrityImages.length;
-          const newImage = document.createElement('div');
-          newImage.className = 'celebrity-image';
-          newImage.style.backgroundImage = `url(${celebrityImages[currentImageIndex]})`;
-          newImage.style.opacity = '0';
-          container.appendChild(newImage);
-          newImage.offsetHeight; 
-          newImage.style.opacity = '1';
-          if (oldImage) {
-            oldImage.style.opacity = '0';
-            setTimeout(() => {
-              if (container.contains(oldImage)) { container.removeChild(oldImage); }
-            }, 1000); 
-          }
+        function generateUrl() {
+            const baseUrl = getBaseUrl(); // Tự động lấy link: .../locket.cam/id/
+            const userId = document.getElementById('user-id').value.trim();
+            const dynamicLink = document.getElementById('dynamic-link').value.trim();
+            const imageListText = document.getElementById('image-list').value.trim();
+            const slideshowSpeed = document.getElementById('slideshow-speed').value;
+            let ogImage = document.getElementById('og-image').value.trim();
+
+            const images = imageListText.split('\n')
+                                        .filter(link => link.trim() !== '')
+                                        .map(link => link.trim());
+            
+            if (images.length === 0) {
+                alert("Bạn phải nhập ít nhất một link ảnh.");
+                return null;
+            }
+
+            if (ogImage === '') {
+                ogImage = images[0];
+            }
+            
+            if (!userId || !dynamicLink) {
+                alert("Vui lòng điền User ID và Link chuyển đổi.");
+                return null;
+            }
+            
+            const encodedId = encodeURIComponent(userId);
+            const encodedDynamicLink = encodeURIComponent(dynamicLink);
+            const encodedImages = encodeURIComponent(images.join(','));
+            const encodedOgImage = encodeURIComponent(ogImage);
+
+            // Trả về URL cuối cùng
+            return `${baseUrl}?id=${encodedId}&link=${encodedDynamicLink}&images=${encodedImages}&speed=${slideshowSpeed}&ogImage=${encodedOgImage}`;
         }
-      }
-    } else {
-        // Xử lý trường hợp không có dữ liệu trên URL
-        document.querySelector('.flex-vertical').innerHTML = '<h1>Lỗi: Không tìm thấy thông tin cấu hình.</h1>';
-    }
-  });
 
-  // --- 3. XỬ LÝ NÚT BẤM VÀ LINK CHUYỂN ĐỔI ---
-  async function copyTextToClipboard(text) {
-    await navigator.clipboard.write([
-      new ClipboardItem({ 'text/plain': new Blob([text], { type: 'text/plain' }) })
-    ]);
-  }
+        function generateAndRedirect() {
+            const finalUrl = generateUrl();
+            if (finalUrl) {
+                // Chuyển hướng người dùng đến trang kết thúc
+                window.location.href = finalUrl;
+            }
+        }
+        
+        // Hiển thị link để sao chép (nếu muốn)
+        document.querySelector('.container').addEventListener('input', function() {
+            const finalUrl = generateUrl();
+            if (finalUrl) {
+                document.getElementById('output-area').style.display = 'block';
+                document.getElementById('output-link').value = finalUrl;
+                document.getElementById('copy-button').innerText = 'Sao chép Link';
+            } else {
+                 document.getElementById('output-area').style.display = 'none';
+            }
+        });
 
-  function isIOSDevice() {
-    return [
-      'iPad Simulator', 'iPhone Simulator', 'iPod Simulator',
-      'iPad', 'iPhone', 'iPod'
-    ].includes(navigator.platform)
-    || (navigator.userAgent.includes("Mac") && "ontouchend" in document);
-  }
 
-  async function openDynamicLink() {
-    const link = CONFIG.DYNAMIC_LINK; 
-    if (isIOSDevice()) {
-      copyTextToClipboard(link);
-    }
-    window.location.href = link;
-  }
-</script>
+        function copyLink() {
+            const outputLink = document.getElementById('output-link');
+            if (!outputLink.value) {
+                alert("Chưa có link để sao chép. Vui lòng điền đầy đủ thông tin.");
+                return;
+            }
+            outputLink.select();
+            outputLink.setSelectionRange(0, 99999);
+            
+            try {
+                navigator.clipboard.writeText(outputLink.value);
+                document.getElementById('copy-button').innerText = 'Đã sao chép!';
+            } catch (err) {
+                alert('Không thể sao chép tự động.');
+            }
+        }
+    </script>
 
 </body>
 </html>
